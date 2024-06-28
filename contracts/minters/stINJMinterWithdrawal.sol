@@ -5,7 +5,7 @@ import "../Minter.sol";
 
 contract stINJMinterWithdrawal is NativeMinterWithdrawal {
 
-    constructor(address _stakingToken) NativeMinterWithdrawal(_stakingToken, "unstZETA", "unstZETA") {
+    constructor(address _stakingToken) NativeMinterWithdrawal(_stakingToken, "unstINJ", "unstINJ") {
     }
 
 }
