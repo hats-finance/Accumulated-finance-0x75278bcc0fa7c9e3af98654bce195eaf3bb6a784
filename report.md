@@ -24,7 +24,7 @@ Omnichain modular liquid staking and restaking. Boosted staking yields and extra
 - Type: A public audit competition hosted by Accumulated finance
 - Duration: 14 days
 - Maximum Reward: $35,428.07
-- Submissions: 72
+- Submissions: 100
 - Total Payout: $16,407.1 distributed among 12 participants.
 
 ## Scope of Audit
@@ -65,7 +65,22 @@ https://testnet.accumulated.finance/stake/rosebeta
 - stROSE (ERC-20): 0x9cd892c37258290bcdc59dc8e159785fb0045b18
 - wstROSE (ERC-4626): 0x3be7a9e2526f6be015f3b2b13fe5fb9444ada20f
 
+ ## Medium severity issues
+
+- **Potential NFT Manipulation in requestWithdrawal Function due to _safeMint Usage**
+The requestWithdrawal() function in the Mintersol contract allows users to request token withdrawals by transferring staking tokens to the contract. A new NFT, with an incremented withdrawal ID, is minted to the user via _safeMint(). This poses a security risk similar to a past incident where _safeMint() was exploited. The vulnerability occurs if the receiving smart contract deliberately rejects NFT reception, causing a transaction revert, and the attacker selectively mints desirable NFTs. The recommended solution is to replace _safeMint() with _mint() to eliminate the possibility of exploitation. Moreover, while the NFTs only serve as identifiers for deposit operations and lack uniqueness, the costs associated with attack attempts are significantly high due to the gas fees.
+Link: [Issue #27](https://github.com/hats-finance/OLD-Accumulated-finance-0x75278bcc0fa7c9e3af98654bce195eaf3bb6a784/issues/27)
+
+
 ## Low severity issues
+
+- **Native Token ClaimWithdrawal Function Lacks Claimed Status Check in Minter.sol**
+In the minter.sol contract, the claimWithdrawal function for native tokens lacks a crucial check to ensure a withdrawal hasn't already been claimed, unlike its ERC20 counterpart. Although marking a withdrawal as claimed without this check doesn't immediately cause loss of funds, it results in inconsistent behavior. A code fix to include this verification step is recommended.
+Link: [Issue #19](https://github.com/hats-finance/OLD-Accumulated-finance-0x75278bcc0fa7c9e3af98654bce195eaf3bb6a784/issues/19)
+
+- **Reentrancy issue in collectWithdrawalFees due to CEI pattern violation**
+In Minter.sol, the collectWithdrawalFees() function allows owners to withdraw fees but may be vulnerable to reentrancy attacks. This is due to a violation of the Checks-Effects-Interactions (CEI) pattern, where external calls should occur last. It’s recommended to update the pattern or add a nonReentrant modifier to secure the function.
+Link: [Issue #26](https://github.com/hats-finance/OLD-Accumulated-finance-0x75278bcc0fa7c9e3af98654bce195eaf3bb6a784/issues/26)
 
 
 - **AccumulatedFi contracts vulnerability with Solmate's SafeTransferLib affecting fund transfers**
